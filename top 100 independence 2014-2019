@@ -92,3 +92,5 @@ y2015_2019 = pd.concat(frames)
 y2015_2019.tail(5)
 
 y2015_2019
+
+y2015_2019.to_csv('y2015_2019.csv', index=False)
