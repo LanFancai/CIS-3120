@@ -1,0 +1,94 @@
+import requests
+from bs4 import BeautifulSoup as bs
+import numpy as np
+import pandas as pd
+url = 'https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2019#data-table'
+r = requests.get(url)
+src = r.content
+soup = bs(src, 'html.parser')
+#print(soup.find('table'))
+# Get the content of the website and convert it and used beautifulsoup 
+#to parse through it
+
+los = soup.find_all('table')
+RR = ResturantRankings = []
+
+for table in los:
+    headers = []  #set us a list for the headers
+    rows = table.find_all('tr') 
+    for header in table.find('tr').find_all('th'):   #This searches through the first row for the headers
+        headers.append(header.text)  #this adds each text for each column in the row to the list
+    for row in table.find_all('tr')[1:]:   #this makes the loop start from the first row
+        values = []
+        for col in row.find_all(['th','td']):
+            values.append(col.text) #Adds each value to the list
+            
+        if values:
+            state_dict = {}
+            for i in range(len(values)):
+                state_dict[headers[i]] = values[i]  #creates the dictionary 
+            RR.append(state_dict)    
+            
+print(RR)
+
+af = pd.DataFrame(RR)
+af
+af['Year']=2019
+af
+
+
+def scraper(fullurl,year):
+    global df
+    global fdf
+    url = fullurl
+    r = requests.get(url)
+    src = r.content
+    soup = bs(src, 'html.parser')
+    los = soup.find_all('table')
+    RR = ResturantRankings = []
+    for table in los:
+        headers = []  #set us a list for the headers
+        rows = table.find_all('tr') 
+    for header in table.find('tr').find_all('th'):   #This searches through the first row for the headers
+        headers.append(header.text)  #this adds each text for each column in the row to the list
+    for row in table.find_all('tr')[1:]:   #this makes the loop start from the first row
+        values = []
+        for col in row.find_all(['th','td']):
+            values.append(col.text) #Adds each value to the list
+            
+        if values:
+            state_dict = {}
+            for i in range(len(values)):
+                state_dict[headers[i]] = values[i]  #creates the dictionary 
+            RR.append(state_dict)
+    df = pd.DataFrame(RR)
+    df['Year']=year
+    
+    
+#Year:2019
+scraper('https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2019#data-table',2019)
+y2019 = df
+y2019
+
+#Year:2018
+scraper('https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2018#data-table',2018)
+y2018 = df
+
+#Year:2017
+scraper('https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2017#data-table',2017)
+y2017 = df
+
+#Year:2016
+scraper('https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2016#data-table',2016)
+y2016 = df
+
+#Year:2015
+scraper('https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2015#data-table',2015)
+y2015 = df
+
+frames = [y2015, y2016, y2017,y2018,y2019]
+y2015_2019 = pd.concat(frames)
+
+y2015_2019.tail(5)
+
+y2015_2019
