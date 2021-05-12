@@ -13,7 +13,6 @@ url = 'https://www.restaurantbusinessonline.com/top-100-independents-2018?year=2
 #Makes a function to scrape website on multiple years
 def scraper(fullurl,year):
     global df
-    global fdf
     url = fullurl
     r = requests.get(url)
     src = r.content
